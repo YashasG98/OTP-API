@@ -1,6 +1,14 @@
 # OTP-API
 A flask app with One-Time-Password related APIs. These APIs use [2factor.in](https://2factor.in) OTP provider.
 
+### To setup your environment 
+```bash
+sudo pip install virtualenv
+python3 -m venv flaskenv
+source flaskenv/bin/activate
+pip install -r requirements.txt
+```
+
 ### OTP Generation API
 
 To access this API via your browser, provide phone number with the URL. 
