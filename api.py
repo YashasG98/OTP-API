@@ -1,9 +1,11 @@
 import flask
 import http.client,json,sqlite3
-from flask import request
+from flask import request,jsonify
 
 app = flask.Flask(__name__)
 app.config["DEBUG"] = True
+
+resp = {'Details':'','Status':''}
 
 @app.route('/', methods=['GET'])
 def home():
@@ -20,6 +22,11 @@ def api_otp_gen():
 
     query_parameters = request.args
     phone = query_parameters.get('phone')
+
+    if(len(phone)<10 or phone.isdigit() is False):
+        resp['Status'] = 'Error'
+        resp['Details'] = 'Improper phone number'
+        return jsonify(resp)
 
     http_conn = http.client.HTTPConnection("2factor.in")
     payload = ""
@@ -57,7 +64,14 @@ def api_otp_verify():
     _query = "SELECT session_id from SessionID WHERE phone_number = {0}"
     cur = db_conn.cursor()
     cur.execute(_query.format(phone))
-    session_id = cur.fetchall()[0][0]
+    db_output = cur.fetchall()
+    
+    if(len(db_output) is 0):
+        resp['Status'] = 'Error'
+        resp['Details'] = 'Invalid Phone number'
+        return jsonify(resp)
+    else:
+        session_id = db_output[0][0]
 
     http_conn = http.client.HTTPConnection("2factor.in")
     payload = ""
