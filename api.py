@@ -24,6 +24,36 @@ def api_otp_gen():
     conn = http.client.HTTPConnection("2factor.in")
     payload = ""
     headers = { 'content-type': "application/x-www-form-urlencoded" }
+    request_path = "/API/V1/4ebb88cd-173e-11ea-9fa5-0200cd936049/SMS/"+phone+"/AUTOGEN"
+    conn.request("GET", request_path, payload, headers)
+    res = conn.getresponse()
+    data = res.read()
+    json_data = json.loads(data.decode('utf-8'))
+
+    status = json_data['Status']
+
+    if(status == 'Success'):
+        session_id = json_data['Details']
+        _query = "INSERT INTO SessionID VALUES({0},'{1}')"
+        conn = sqlite3.connect('sqlite.db')
+        cur = conn.cursor()
+        print(_query.format(phone,session_id))
+        cur.execute(_query.format(phone,session_id))
+        conn.commit()
+        del json_data['Details']
+        return json_data
+    else:
+        return json_data
+
+@app.route('/api/v1/otpverify', methods=['GET'])
+def api_otp_verify():
+
+    query_parameters = request.args
+    phone = query_parameters.get('phone')
+
+    conn = http.client.HTTPConnection("2factor.in")
+    payload = ""
+    headers = { 'content-type': "application/x-www-form-urlencoded" }
     conn.request("GET", "/API/V1/4ebb88cd-173e-11ea-9fa5-0200cd936049/SMS/7019098800/AUTOGEN", payload, headers)
     res = conn.getresponse()
     data = res.read()
