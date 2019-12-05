@@ -22,7 +22,7 @@ http://127.0.0.1:5000/api/v1/otpgen?phone=9988776655
 To access this API via your browser, provide phone number and OTP with the URL. 
 
 ```bash
-http://127.0.0.1:5000/api/v1/otpgen?phone=9988776655&otp=123456
+http://127.0.0.1:5000/api/v1/otpverify?phone=9988776655&otp=123456
 ```
 
 ### Understanding the response of the APIs
